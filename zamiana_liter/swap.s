@@ -7,7 +7,7 @@ SYSEXIT32 = 1
 SYSCALL32 = 0x80
 
 .data
-    input: .space 40
+    input: .space 20
 
 .text
 
@@ -31,14 +31,6 @@ _start:
     mov %eax, %esi                  # w esi przechochowywana bedzie dlugosc inputu
     dec %esi                        # iterujemy od 0, dlugosc liczona jest od 1
 
-    #  drukowanie inputu              # do tego momentu to jest echo
-    # mov $SYSWRITE32, %eax
-    # mov $STDOUT, %ebx
-    # mov $input, %ecx
-    # mov $40, %edx
-    # int $SYSCALL32
-
-
     # petla zamieniajaca male litery na duze
     xor %edi, %edi                  # edi to licznik petli
     
@@ -48,22 +40,34 @@ _start:
         inc %edi
         cmp %esi, %edi
         jl loop
-    # petla zamianiajaca miejscami w parach
+
+
+    # zamiana miejscami w parach
 
     call print
 
     xor %edi, %edi  
-   
+    sub $1, %esi
+   /*
     push input(%edi)
     mov $1, %edx                       
-    movb input(%edx,%edi), %ah
+    movb input(%edx,%edi,1), %ah
     movb %ah, input(%edi)    
-    pop input(%edx,%edi)                   
+    pop input(%edx,%edi, 1)                   
+    */
+
+    loop2:
+    mov $1, %edx
+    movb input(%edx, %edi), %ah
+    movb input(%edi), %bh
+    movb %bh, input(%edx, %edi)
+    movb %ah, input(%edi)
+    add $2, %edi
+    cmp %esi, %edi
+    jl loop2
+
 
     call print
-    
-    # drukowanie inputu              # do tego momentu to jest echo
-    
 
     mov $SYSEXIT32, %eax
     mov $EXIT_SUCCESS, %ebx
@@ -76,4 +80,3 @@ print:
     mov $40, %edx
     int $SYSCALL32
     ret
-    
