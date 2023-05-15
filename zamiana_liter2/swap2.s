@@ -36,10 +36,24 @@ _start:
     
 
     loop:
-         # sprawdzam czy litera jest mala
-        cmpb $0x60, input(%edi)             # sprawdzam czy kod ASCII litery - kod ASCII 'a'-1 jest wiekszy od 0        ??cmpB
-        jl toSmall                          # jesli jest to zanczy ze jest to mala liter i skacze do zamiany na duze    ?? jaki skok
-        # wpp zamniana na male
+         # taki switch case sprawdzajacy w jakich przedzialach miesci sie kod ascii danego znaku
+        cmpb $0x66, input(%edi)             # sprawdzam czy kod ASCII litery - kod ASCII 'a'-1 jest wiekszy od kodu 'f'
+        jg toZero                           # Jesli tak to zamieniam na zero
+
+        cmpb $0x60, input(%edi)             # sprawdzam czy jest wieksze/rowne kod ASCII 'a'
+        jg toBig                            # jesli tak to zamieniam na duze
+
+        cmpb $0x39, input(%edi)              # sprawdzam czy jest wieksze niz kod ASCII 9
+        jg toZero                           # jesli tak to zamieniam na 0
+
+        cmpb $0x30, input(%edi)              # sprawdzam czy jest mniejsze niz kod ASCII 0
+        jl toZero                           # jesli tak to zamieniam na 0
+
+        inc %edi
+        cmp %esi, %edi  
+        jl loop                            # default case = cyfra od 0 do 9 pozostaje bez zmiany
+        jmp endOfLoop 
+
         toBig:                              # zamiana z malych na duze
             subb $0x20, input(%edi)         # odejmuje 32 (0x20 w zapisie 16) od wartosci litery - zamieniam jej kod ASCII na duza 
             inc %edi                        # zwieksz licznik
@@ -47,12 +61,16 @@ _start:
             jl loop                         # jesli spelniony warunek to skok na poczatek
             jmp endOfLoop                   # jesli nie zostal spelniony warunek petli to wychodzimy 
 
-        toSmall:                            # zamiana z duzych na male
-            addb $0x20, input(%edi)         # dodaje 32 (kody ascii)
-            inc %edi                        
+        toZero:                            # zamiana na zera
+            movb $0x30, input(%edi)         # wpisuje kod ascii zera
+            inc %edi                       
             cmp %esi, %edi              
             jl loop                         # jesli sa litery dalej to wracam na poczatek
+            jmp endOfLoop                   # jesli nie zostal spelniony warunek petli to wychodzimy 
+
     endOfLoop:                              # koniec petli
+
+
     # zamiana miejscami w parach
     
     call print                          # funkcja wypisujaca obecny stan inputu
