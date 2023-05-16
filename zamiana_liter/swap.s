@@ -85,5 +85,3 @@ print:
     mov $40, %edx
     int $SYSCALL32
     ret
-
-

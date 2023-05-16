@@ -1,5 +1,5 @@
-# swaping a-f to A-F, and all other into 0 despite numbers. Then swaping in pairs.
-# for example: a1b2c3 -> A1B2C3 -> 1A2B3C
+# swaping a-z to A-Z, and all other into space. Then reversing the order
+# for example: Hel1#!LLO -> HEL   LLO -> OLL LEH
 STDOUT = 1
 STDIN = 0
 SYSWRITE32 = 4
@@ -10,6 +10,9 @@ SYSCALL32 = 0x80
 
 .data
     input: .space 20
+    
+    newline: .ascii "\n"
+    newline_len = .-newline
 
 .text
     msg: .ascii "Give input: "
@@ -40,21 +43,21 @@ _start:
 
     loop:
          # taki switch case sprawdzajacy w jakich przedzialach miesci sie kod ascii danego znaku
-        cmpb $0x66, input(%edi)             # sprawdzam czy kod ASCII litery - kod ASCII 'a'-1 jest wiekszy od kodu 'f'
-        jg toZero                           # Jesli tak to zamieniam na zero
+        cmpb $0x7A, input(%edi)             # sprawdzam czy to jest znak po literze z w tablicy ascii
+        jg toSpace                           # Jesli tak to zamieniam na spacje
 
         cmpb $0x60, input(%edi)             # sprawdzam czy jest wieksze/rowne kod ASCII 'a'
         jg toBig                            # jesli tak to zamieniam na duze
 
-        cmpb $0x39, input(%edi)              # sprawdzam czy jest wieksze niz kod ASCII 9
-        jg toZero                           # jesli tak to zamieniam na 0
+        cmpb $0x5A, input(%edi)              # sprawdzam czy jest wieksze niz kod ASCII Z
+        jg toSpace                           # jesli tak to zamieniam na spacje
 
-        cmpb $0x30, input(%edi)              # sprawdzam czy jest mniejsze niz kod ASCII 0
-        jl toZero                           # jesli tak to zamieniam na 0
+        cmpb $0x41, input(%edi)              # sprawdzam czy jest mniejsze niz kod ASCII A
+        jl toSpace                           # jesli tak to zamieniam na spacje
 
         inc %edi
         cmp %esi, %edi  
-        jl loop                            # default case = cyfra od 0 do 9 pozostaje bez zmiany
+        jl loop                            # default case = litery od A do Z pozostaja bez zmiany
         jmp endOfLoop 
 
         toBig:                              # zamiana z malych na duze
@@ -64,8 +67,8 @@ _start:
             jl loop                         # jesli spelniony warunek to skok na poczatek
             jmp endOfLoop                   # jesli nie zostal spelniony warunek petli to wychodzimy 
 
-        toZero:                            # zamiana na zera
-            movb $0x30, input(%edi)         # wpisuje kod ascii zera
+        toSpace:                            # zamiana na spacje
+            movb $0x20, input(%edi)         # wpisuje kod ascii spacji
             inc %edi                       
             cmp %esi, %edi              
             jl loop                         # jesli sa litery dalej to wracam na poczatek
@@ -74,25 +77,30 @@ _start:
     endOfLoop:                              # koniec petli
 
 
-    # zamiana miejscami w parach
-    
+    # zamiana kolejnosci
+    call newLine
     call print                          # funkcja wypisujaca obecny stan inputu
+    call newLine
 
     xor %edi, %edi                      # zerowanie petli
-    sub $1, %esi                        # zmniejszam licznik jeszcze o 1 w dol tak by nie wyjsc poza zakres
+    # %esi to dlugosc slowa 0 - len-1
    
     loop2:                              # petla druga odpowiada za zamiane miejscami liter
-    mov $1, %edx                        # wpisuje 1 do %edx, by potem korzystac z tego przy odwolywaniu sie do drugiej litery
-    movb input(%edx, %edi), %ah         # kopiuje t[%edi + %edx] do %ah, czyli kopiowanie drugiej litery
-    movb input(%edi), %bh               # kopiuje t[%edi] do %bh, czyli kopiowanie pierwszej litery
-    movb %bh, input(%edx, %edi)         # wpisuje pierwsz w miejsce drugiej
-    movb %ah, input(%edi)               # wpisuje druga w miejsce pierwszej
-    add $2, %edi                        # dodaje 2 do licznika przed sprawdzeniem czy spelniony jest warunek petli                      i = i + 2
+                                        # w kazdej iteracji %edi przesuwa sie o litere do przodu, a %esi o litere do tylu (startujac od konca)
+    movb input(%edi), %ah               # przepisuje n-ta litere idac od poczatku 
+    movb input(%esi), %bh               # przepisuje n-ta litere idac od konca
+    movb %bh, input(%edi)               # wpisuje pierwsza w miejsce drugiej
+    movb %ah, input(%esi)               # wpisuje druga w miejsce pierwszej
+    add $1, %edi                        # aktualizuje obydwa liczniki
+    sub $1, %esi
     cmp %esi, %edi                      #   
-    jl loop2                            # jesli licznik %edi - %esi < 0, czyli l. petli - dl. wiadomosci < 0 to kolejna iteracja        i < len
+    jl loop2                            # jesli sie jeszcze nie spotakly to kolejna iteracja
 
 
+
+    # call newLine
     call print                          # funkcja drukowania
+    call newLine
 
     # konczenie programu z exit code 0
     mov $SYSEXIT32, %eax
@@ -103,7 +111,15 @@ print:
     mov $SYSWRITE32, %eax
     mov $STDOUT, %ebx
     mov $input, %ecx
-    mov $40, %edx
+    mov $20, %edx
+    int $SYSCALL32
+    ret
+
+newLine:
+    mov $SYSWRITE32, %eax
+    mov $STDOUT, %ebx
+    mov $newline, %ecx
+    mov $newline_len, %edx
     int $SYSCALL32
     ret
 
