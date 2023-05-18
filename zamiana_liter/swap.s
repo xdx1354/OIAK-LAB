@@ -62,9 +62,9 @@ _start:
    
     loop2:                              # petla druga odpowiada za zamiane miejscami liter
     mov $1, %edx                        # wpisuje 1 do %edx, by potem korzystac z tego przy odwolywaniu sie do drugiej litery
-    movb input(%edx, %edi), %ah         # kopiuje t[%edi + %edx] do %ah, czyli kopiowanie drugiej litery
+    movb input(%edi, %edx,1), %ah       # kopiuje t[%edi + %edx] do %ah, czyli kopiowanie drugiej litery
     movb input(%edi), %bh               # kopiuje t[%edi] do %bh, czyli kopiowanie pierwszej litery
-    movb %bh, input(%edx, %edi)         # wpisuje pierwsz w miejsce drugiej
+    movb %bh, input(%edx, %edi,1)       # wpisuje pierwsz w miejsce drugiej
     movb %ah, input(%edi)               # wpisuje druga w miejsce pierwszej
     add $2, %edi                        # dodaje 2 do licznika przed sprawdzeniem czy spelniony jest warunek petli                      i = i + 2
     cmp %esi, %edi                      #   
