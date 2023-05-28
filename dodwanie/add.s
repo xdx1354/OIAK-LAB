@@ -7,7 +7,7 @@ SYSEXIT32 = 1
 SYSCALL32 = 0x80
 
 .data
-   number:  .word 0x9222, 0x3300, 0x9200, 0x5000              
+   number:  .word 0x9222          
    number_len = .-number            # dlugosc w bajtach
    number_mem = number_len / 2;     # wyznaczam ilosc blokow 16-bit
 
@@ -82,7 +82,19 @@ koniec:
     int $SYSCALL32
 
 
+/*
+    operacje w gdb
+    gdb nazwa       =       wlacza dany plik w gdb 
+    b 39            =       dodaje break point w 39 linii
+    run             =       odapla program
+    i r             =       wyswietla rejestry
+    x /2xw &number  =       examine /2baty jako hexadecimal word?   &number to adres w pamieci, tu poczatek liczby opisanej etykieta number
+    c               =       continue    wznownienie po break point
+    q               =       quit        wyjscie
 
+
+
+*/
 
 
 
