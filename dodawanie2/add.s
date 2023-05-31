@@ -26,7 +26,8 @@ loop:
     popf                            # pobieram rejestr flag ze stosu
     movw (%esi, %ecx, 2), %ax       # wczytywanie 16-bit slowa do AX
     adcw (%esi, %ecx, 2), %ax       # dodaje do niego znow to samo slowo, wynik w %ax
-    movw %ax, (%ebx, %ecx, 2)       # zapisuje wynik w tym samym miejscu pamieci wzgledme result (na tej samej pozycji result)
+    # movw %ax, (%ebx, %ecx, 2)       # zapisuje wynik w tym samym miejscu pamieci wzgledme result (na tej samej pozycji result)
+    movw %ax, (%esi, %ecx, 2)
     pushf                           # pushuje rejest flag by flaga carry nie zostala nadpisana przy porowaniu warunku petli (cmpl)
     
     incl %ecx                       # zwieksznie licznika petli
