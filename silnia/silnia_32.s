@@ -7,7 +7,6 @@ silnia_32:
     mov %esp, %ebp
     push %ebx
 
-
     cmpl $0, 8(%ebp)            # sprawdzam czy jest teraz 1
     je base_case
     cmpl $1, 8(%ebp)            # sprawdzam czy jest 1
@@ -18,12 +17,9 @@ silnia_32:
     dec %edx                # zmiejszam o 1
     push %edx               # wrzucam na stos
     call silnia_32          # rekurencyjnie wywoluje       
-    # pop %edx
-    # mov %eax, %ebx
-    imul 8(%ebp), %eax
-    mov %eax, %ebx
-    mov %edx, %eax
     pop %edx
+    imul %edx, %eax
+    # mov %eax, %ebx
 
     jmp exit
 
@@ -33,6 +29,7 @@ silnia_32:
         jmp exit
 
     exit:
+        pop %ebx
         pop %ebp
         ret
 
