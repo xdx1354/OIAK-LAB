@@ -1,4 +1,3 @@
-iter = 100
 .data
 a: .float 0.0
 b: .float 0.0

@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-extern float sum(float a, float b, float n);
+extern float sum(float a, float b, float n, char x);
 
 int main(){
-    float result = sum(3.0f, 4.0f, 3.0f);
+    float result = sum(1.0f, 2.0f, 200.0f, '0' );
     printf("Calka z tej funkcji wynosi: %.4f\n", result);
     return 0;
 }
