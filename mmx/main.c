@@ -8,7 +8,7 @@ float b  = 5.0;
 float DX;
 float tabDX[4];
 float tabSTARTX[4];
-int   ilosc = 1000;
+int   ilosc = 100000;
 
 int main() {
   unsigned int start, end;
@@ -19,7 +19,7 @@ int main() {
   DX = (b-a)/ilosc;
 
   // calka 2--------------------------------------
-  start = rdtsc_p(1,10);
+  start = rdtsc_p(0,10);
 
   for (int i = 0; i < 4; i++) tabDX[i] = DX;
 
@@ -27,7 +27,7 @@ int main() {
 
   unsigned int temp = calka();
   wynik = *(float*)&temp;
-  end   = rdtsc_p(1,10);
+  end   = rdtsc_p(0,10);
   printf("%.6f, czas %d\n", wynik, end - start);
   //printf("wynik = %.4f\n",wynik);
 

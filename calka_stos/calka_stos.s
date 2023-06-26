@@ -12,34 +12,34 @@ integral:
 
 	sub $16, %rsp  # rezerwujemy miejsce na zmienne
 
-	fildl 24(%rbp)  # n
-	fldl 16(%rbp)   # A
-	fldl 20(%rbp)   # B
+	fild 24(%rbp)  # n
+	fld 16(%rbp)   # A
+	fld 20(%rbp)   # B
 
 	fsubp
 	fdivp		# k = (B-A)/n
-	fstpl -16(%rbp)  # zapisujemy k
+	fstp -16(%rbp)  # zapisujemy k
 	fldz            # 0 na stos - wynik
 	mov $0, %rax    # rax as an iterator
 petla:
-	fldl 16(%rbp)    # A
-	fldl -16(%rbp)   # A k
+	fld 16(%rbp)    # A
+	fld -16(%rbp)   # A k
 	push %rax
-	fildl (%rsp)	# A k i
+	fild (%rsp)	# A k i
 	pop %rax
 	fmulp		# A i*k
 	faddp		# A+i*k
-	fldl -16(%rbp)   # A+i*k k
-	fldl pol 	# A+i*k k 0.5
+	fld -16(%rbp)   # A+i*k k
+	fld pol 	# A+i*k k 0.5
 	fdiv %st(1),%st # A+i*k 0.5k
 	fstpl -24(%rbp)
 	faddp	        # x = A + k/2 + i * k
 	fld %st(0)	# x x
-	fldl wsp1_1	# x x 7 
-	fldl wsp1_0	# x x 7 1
+	fld wsp1_1	# x x 7 
+	fld wsp1_0	# x x 7 1
 	fdivp		# x x 1/7
 	fmulp		# x 1/7x
-	fldl wsp2	# x 1/7x 4
+	fld wsp2	# x 1/7x 4
 	faddp		# x 1/7x+4
 	fmulp		# 1/7x^2 + 4
 	faddp		# dodaj do wyniku
@@ -47,9 +47,9 @@ petla:
 	cmp %rax, 24(%rbp)	#warunek petli sprawdzany
 	jne petla
 	
-	fldl -16(%rbp)		
+	fld -16(%rbp)		
 	fmulp
-	fstpl -16(%rbp)
+	fstp -16(%rbp)
 	
 	movss -16(%rbp), %xmm0	#zapis wyniku do xmm0
 	mov %rbp, %rsp
