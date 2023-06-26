@@ -7,6 +7,7 @@
   cztery: .float 4,4,4,4
   jeden_siedem: .float 0.1428,0.1428,0.1428,0.1428
 
+
 .text
 .global calka
 .type calka, @function
@@ -31,17 +32,24 @@ push %rcx
   mulps %xmm7, %xmm1      # xmm2: 1/7 * x*
   # movups %xmm0, %xmm3     # xmm3: x
   movups cztery, %xmm5    # xmm4: 4
-  addps %xmm5, %xmm1      # xmm2: 1/7 * x* +4
+  addps %xmm5, %xmm1      # xmm2: 1/7 * x +4
   movups %xmm0, %xmm5     # xmm1: x
   mulps %xmm5, %xmm1
   # mulps %xmm6, %xmm2	    # xmm2: xmm2*dx
   addps %xmm1, %xmm4      # xmm4: WYNIK += xmm2 dodaje do sumy wysokosci wszystkich poprzednich prostokatow
 
+  movups cztery, %xmm9
+  mulps %xmm6, %xmm9      # xmm5: 4*dx
+  addps %xmm9, %xmm0
+
+  /*
   addps %xmm6, %xmm0      # dodaję 4 * dx do x'a
   addps %xmm6, %xmm0
   addps %xmm6, %xmm0
   addps %xmm6, %xmm0
-
+*/
+  # przyspieszenie kosztem dokladnosci
+  
   add $4, %ecx            # dodaję 4 do licznika pętli
   cmp %ecx, ilosc
   je return

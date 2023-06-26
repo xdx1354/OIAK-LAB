@@ -4,7 +4,6 @@ unsigned int rdtsc_p(char bol, int iter);
 
 float a  = 2.0;
 float b  = 5.0;
-//float DX = (float)1 / 65536;
 float DX;
 float tabDX[4];
 float tabSTARTX[4];

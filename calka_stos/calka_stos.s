@@ -44,14 +44,14 @@ petla:
 	fmulp		# 1/7x^2 + 4
 	faddp		# dodaj do wyniku
 	inc %rax	# inkrementacja licznika
-	cmp %rax, 24(%rbp)	#warunek petli sprawdzany
+	cmp %rax, 24(%rbp)	# warunek petli sprawdzany
 	jne petla
 	
 	fld -16(%rbp)		
 	fmulp
 	fstp -16(%rbp)
 	
-	movss -16(%rbp), %xmm0	#zapis wyniku do xmm0
+	movss -16(%rbp), %xmm0	# zapis wyniku do xmm0
 	mov %rbp, %rsp
 	pop %rbp
 ret
