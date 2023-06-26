@@ -4,17 +4,20 @@ unsigned int rdtsc_p(char bol, int iter);
 
 float a  = 2.0;
 float b  = 5.0;
-float DX = (float)1 / 65536;
+//float DX = (float)1 / 65536;
+float DX;
 float tabDX[4];
 float tabSTARTX[4];
-int   ilosc;
+int   ilosc = 1000;
 
 int main() {
   unsigned int start, end;
   float wynik = 0;
   float x     = a;
 
-  ilosc = (b-a)/DX;
+  //ilosc = (b-a)/DX;
+  DX = (b-a)/ilosc;
+
   // calka 2--------------------------------------
   start = rdtsc_p(1,10);
 
